@@ -4,30 +4,44 @@ document.addEventListener("DOMContentLoaded", function() {
     .then(sentenceObjectArray => runApplication(sentenceObjectArray))
 
   let currentWord
-  let counter = 0
+  let currentSentenceArray
+  let allSentences
+  let wordCounter = 0
   let button = document.getElementById('word-button')
 
   button.addEventListener('click', function(e) {
     e.preventDefault()
-    let input = e.target.parentElement.children[0]
-    let wordDiv = document.getElementById(`word-${++counter}`)
+    if (wordCounter != currentSentenceArray.length) {
+      let input = e.target.parentElement.children[0]
+      let wordDiv = document.getElementById(`word-${++wordCounter}`)
+      updateWord(wordDiv, input)
+      input.value = ""
+    } else {
+      round(allSentences)
+      
+    }
+  })
+
+  function runApplication(sentenceObjectArray) {
+    allSentences = sentenceObjectArray
+    round(allSentences)
+  }
+
+  function round(sentenceObjectArray) {
+    wordCounter = 0
+    clearDivs()
+    let sentence = getRandomSentence(sentenceObjectArray)
+    currentSentenceArray = sentence.content.split(" ")
+    displaySentence(currentSentenceArray)
+  }
+
+  function updateWord(wordDiv, input) {
     if (wordDiv.innerText === input.value) {
       wordDiv.style.color = 'green'
     } else {
       wordDiv.style.color = 'red'
     }
-    input.value = ""
-  })
-
-  function runApplication(sentenceArray) {
-    let sentence = getRandomSentence(sentenceArray)
-    let sentenceWordArray = sentence.content.split(" ")
-    displaySentence(sentenceWordArray)
   }
-
-  function isWordMatching(word, input) {
-      return (input === word)
-    }
 
   // function runGame(sentenceArray) {
   //   let currentRound = 1
@@ -40,22 +54,6 @@ document.addEventListener("DOMContentLoaded", function() {
   //     currentRound ++
   //   }
   // }
-
-  function round(sentenceWordArray) {
-    let counter = 0
-    let score = 0
-    // sentenceWordArray.forEach(word => {
-    //   currentWord = word
-    //   let wordDiv = document.getElementById(`word-${++counter}`)
-    //   if (isWordMatching(word)) {
-    //     wordDiv.style.color = 'green'
-    //     ++ score
-    //   }else{
-    //     wordDiv.style.color = 'red'
-    //   }
-    // })
-      console.log(`${score} out of ${sentenceWordArray.length} correct`)
-  }
 
 
   function getRandomSentence(info) {
