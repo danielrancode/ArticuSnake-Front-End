@@ -1,29 +1,62 @@
 document.addEventListener("DOMContentLoaded", function() {
   fetch("http://localhost:3000/api/v1/sentences")
     .then(text => text.json())
-    .then(parsed => runApplication(parsed))
+    .then(sentenceObjectArray => runApplication(sentenceObjectArray))
+
+  let currentWord
+  let counter = 0
+  let button = document.getElementById('word-button')
+
+  button.addEventListener('click', function(e) {
+    e.preventDefault()
+    let input = e.target.parentElement.children[0]
+    let wordDiv = document.getElementById(`word-${++counter}`)
+    if (wordDiv.innerText === input.value) {
+      wordDiv.style.color = 'green'
+    } else {
+      wordDiv.style.color = 'red'
+    }
+    input.value = ""
+  })
 
   function runApplication(sentenceArray) {
-    const sentence = getRandomSentence(sentenceArray)
-    const sentenceWordArray = sentence.content.split(" ")
+    let sentence = getRandomSentence(sentenceArray)
+    let sentenceWordArray = sentence.content.split(" ")
     displaySentence(sentenceWordArray)
-    runGame(sentenceWordArray)
-
   }
 
-  function isWordMatching(input, word) {
-    return (input === word)
+  function isWordMatching(word, input) {
+      return (input === word)
+    }
+
+  // function runGame(sentenceArray) {
+  //   let currentRound = 1
+  //   while (currentRound < 3) {
+  //     clearDivs()
+  //     let sentence = getRandomSentence(sentenceArray)
+  //     let sentenceWordArray = sentence.content.split(" ")
+  //
+  //     round(sentenceWordArray)
+  //     currentRound ++
+  //   }
+  // }
+
+  function round(sentenceWordArray) {
+    let counter = 0
+    let score = 0
+    // sentenceWordArray.forEach(word => {
+    //   currentWord = word
+    //   let wordDiv = document.getElementById(`word-${++counter}`)
+    //   if (isWordMatching(word)) {
+    //     wordDiv.style.color = 'green'
+    //     ++ score
+    //   }else{
+    //     wordDiv.style.color = 'red'
+    //   }
+    // })
+      console.log(`${score} out of ${sentenceWordArray.length} correct`)
   }
 
-  function runGame(sentenceWordArray) {
-    sentenceWordArray.forEach(word => {
-      console.log(word)
-      let input = prompt("Enter a word!")
-      if (isWordMatching(input, word)) {
-        console.log('hello!')
-      }
-    })
-  }
 
   function getRandomSentence(info) {
     return info[Math.floor(Math.random()*info.length)];
@@ -41,9 +74,9 @@ document.addEventListener("DOMContentLoaded", function() {
     })
   }
 
-
-
-
-
+  function clearDivs() {
+    const sentenceDiv = document.getElementById("sentence")
+    sentenceDiv.innerHTML = ""
+  }
 
 })
