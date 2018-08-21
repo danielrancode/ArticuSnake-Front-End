@@ -5,15 +5,31 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function runApplication(sentenceArray) {
     const sentence = getRandomSentence(sentenceArray)
-    displaySentence(sentence)
+    const sentenceWordArray = sentence.content.split(" ")
+    displaySentence(sentenceWordArray)
+    runGame(sentenceWordArray)
 
   }
+
+  function isWordMatching(input, word) {
+    return (input === word)
+  }
+
+  function runGame(sentenceWordArray) {
+    sentenceWordArray.forEach(word => {
+      console.log(word)
+      let input = prompt("Enter a word!")
+      if (isWordMatching(input, word)) {
+        console.log('hello!')
+      }
+    })
+  }
+
   function getRandomSentence(info) {
     return info[Math.floor(Math.random()*info.length)];
   }
 
-  function displaySentence(sentence) {
-    const sentenceWordArray = sentence.content.split(" ")
+  function displaySentence(sentenceWordArray) {
     const sentenceDiv = document.getElementById("sentence")
     let counter = 0
     sentenceWordArray.forEach(word => {
@@ -24,6 +40,10 @@ document.addEventListener("DOMContentLoaded", function() {
       sentenceDiv.appendChild(wordDiv)
     })
   }
+
+
+
+
 
 
 })
