@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
       input.value = ""
     } else {
       round(allSentences)
-      
+
     }
   })
 
@@ -42,18 +42,6 @@ document.addEventListener("DOMContentLoaded", function() {
       wordDiv.style.color = 'red'
     }
   }
-
-  // function runGame(sentenceArray) {
-  //   let currentRound = 1
-  //   while (currentRound < 3) {
-  //     clearDivs()
-  //     let sentence = getRandomSentence(sentenceArray)
-  //     let sentenceWordArray = sentence.content.split(" ")
-  //
-  //     round(sentenceWordArray)
-  //     currentRound ++
-  //   }
-  // }
 
 
   function getRandomSentence(info) {
