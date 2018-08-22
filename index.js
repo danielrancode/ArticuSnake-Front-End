@@ -9,18 +9,44 @@ document.addEventListener("DOMContentLoaded", function() {
   let wordCounter = 0
   let button = document.getElementById('word-button')
 
-  button.addEventListener('click', function(e) {
-    e.preventDefault()
-    if (wordCounter != currentSentenceArray.length) {
-      let input = e.target.parentElement.children[0]
-      let wordDiv = document.getElementById(`word-${++wordCounter}`)
-      updateWord(wordDiv, input)
-      input.value = ""
-    } else {
-      round(allSentences)
 
-    }
-  })
+  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = new SpeechRecognition()
+  let firstOutput = document.querySelector('.heard-output')
+
+
+
+  //Listen for when the user finishes talking
+  recognition.addEventListener('result', e => {
+
+      if (wordCounter != currentSentenceArray.length) {
+        let transcript = e.results[0][0].transcript.toLowerCase()
+        let wordDiv = document.getElementById(`word-${++wordCounter}`)
+        updateWord(wordDiv, transcript)
+      } else {
+        round(allSentences)
+      }
+  });
+
+
+  function getUserInput() {
+  currentSentenceArray.forEach( word => {
+    recognition.start()
+    recognition.stop()
+    })
+  }
+
+  // button.addEventListener('click', function(e) {
+  //   e.preventDefault()
+  //   if (wordCounter != currentSentenceArray.length) {
+  //     let input = e.target.parentElement.children[0]
+  //     let wordDiv = document.getElementById(`word-${++wordCounter}`)
+  //     updateWord(wordDiv, input)
+  //     input.value = ""
+  //   } else {
+  //     round(allSentences)
+  //   }
+  // })
 
   function runApplication(sentenceObjectArray) {
     allSentences = sentenceObjectArray
@@ -33,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let sentence = getRandomSentence(sentenceObjectArray)
     currentSentenceArray = sentence.content.split(" ")
     displaySentence(currentSentenceArray)
+    getUserInput()
   }
 
   function updateWord(wordDiv, input) {
