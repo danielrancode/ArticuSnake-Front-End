@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", function() {
     let wordCounter = 0
     let button = document.getElementById('word-button')
     let firstOutput = document.querySelector('.heard-output')
-    const mySound = new sound("coinSound.wav");
+    const correctSound = new sound("gotWordRight.wav");
+    const incorrectSound = new sound("gotWordWrong.wav");
 
     // set-up recognition
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -63,10 +64,11 @@ document.addEventListener("DOMContentLoaded", function() {
   function updateWord(wordDiv, input) {
     if (wordDiv.innerText.toLowerCase() === input) {
       wordDiv.style.color = 'green'
-      mySound.play()
+      correctSound.play()
       currentScore ++
     } else {
       wordDiv.style.color = 'red'
+      incorrectSound.play()
     }
   }
 
