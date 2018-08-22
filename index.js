@@ -24,9 +24,11 @@ document.addEventListener("DOMContentLoaded", function() {
   recognition.addEventListener('result', e => {
       if (wordCounter != currentSentenceArray.length) {
         let transcript = e.results[0][0].transcript.toLowerCase()
+        let input = convertHomonym(transcript)
         console.log(transcript)
         let wordDiv = document.getElementById(`word-${++wordCounter}`)
-        updateWord(wordDiv, transcript)
+        console.log(input);
+        updateWord(wordDiv, input)
         if (wordCounter == currentSentenceArray.length) {
           resultScreen()
           setTimeout(() => {
@@ -66,6 +68,15 @@ document.addEventListener("DOMContentLoaded", function() {
       wordDiv.style.color = 'green'
       correctSound.play()
       currentScore ++
+    } else if (wordDiv.innerText.toLowerCase() == "too" || wordDiv.innerText.toLowerCase() == "too") {
+        if (input === "2") {
+          wordDiv.style.color = 'green'
+          correctSound.play()
+          currentScore ++
+        } else {
+          wordDiv.style.color = 'red'
+          incorrectSound.play()
+        }
     } else {
       wordDiv.style.color = 'red'
       incorrectSound.play()
@@ -132,19 +143,34 @@ document.addEventListener("DOMContentLoaded", function() {
       resultDiv.appendChild(text)
     }
 
-    function sound(src) {
-     this.sound = document.createElement("audio");
-     this.sound.src = src;
-     this.sound.setAttribute("preload", "auto");
-     this.sound.setAttribute("controls", "none");
-     this.sound.style.display = "none";
-     document.body.appendChild(this.sound);
-     this.play = function(){
-         this.sound.play();
+      function sound(src) {
+       this.sound = document.createElement("audio");
+       this.sound.src = src;
+       this.sound.setAttribute("preload", "auto");
+       this.sound.setAttribute("controls", "none");
+       this.sound.style.display = "none";
+       document.body.appendChild(this.sound);
+       this.play = function(){
+           this.sound.play();
+       }
+       this.stop = function(){
+           this.sound.pause();
      }
-     this.stop = function(){
-         this.sound.pause();
-   }
- }
+    }
+
+  function convertHomonym(transcript) {
+    switch (transcript) {
+      case "8":
+        transcript = "ate"
+        break;
+      case "4":
+        transcript = "for"
+        break;
+      default:
+        transcript = transcript
+        break;
+    }
+    return transcript
+  }
 
 })
