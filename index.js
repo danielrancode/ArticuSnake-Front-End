@@ -3,6 +3,13 @@ document.addEventListener("DOMContentLoaded", function() {
     .then(text => text.json())
     .then(sentenceObjectArray => runApplication(sentenceObjectArray))
 
+    let currentSentenceArray
+    let allSentences
+    let currentScore
+    let wordCounter = 0
+    let button = document.getElementById('word-button')
+    let firstOutput = document.querySelector('.heard-output')
+
     // set-up recognition
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition()
@@ -19,16 +26,14 @@ document.addEventListener("DOMContentLoaded", function() {
         let wordDiv = document.getElementById(`word-${++wordCounter}`)
         updateWord(wordDiv, transcript)
         if (wordCounter == currentSentenceArray.length) {
-          round(allSentences)
+          resultScreen()
+          setTimeout(() => {
+            round(allSentences)
+          }, 6000);
         }
       }
   });
 
-  let currentSentenceArray
-  let allSentences
-  let wordCounter = 0
-  let button = document.getElementById('word-button')
-  let firstOutput = document.querySelector('.heard-output')
 
   function restartMic() {
       recognition.stop()
@@ -46,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function round(sentenceObjectArray) {
     wordCounter = 0
+    currentScore = 0
     clearDivs()
     let sentence = getRandomSentence(sentenceObjectArray)
     currentSentenceArray = sentence.content.split(" ")
@@ -55,6 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
   function updateWord(wordDiv, input) {
     if (wordDiv.innerText.toLowerCase() === input) {
       wordDiv.style.color = 'green'
+      currentScore ++
     } else {
       wordDiv.style.color = 'red'
     }
@@ -76,27 +83,47 @@ document.addEventListener("DOMContentLoaded", function() {
    })
  }
 
-   function makeDiv(num, word){
-    wordDiv = document.createElement("div")
+ function makeDiv(num, word){
+      let sentenceDiv = document.getElementById('sentence')
+     wordDiv = document.createElement("div")
 
-    wordDiv.setAttribute("id", `word-${num}`)
-    wordDiv.setAttribute("class", "word-box")
+     wordDiv.setAttribute("id", `word-${num}`)
+     wordDiv.setAttribute("class", "word-box")
 
-    // make position sensitive to size and document's width
-    posx = (Math.random() * window.innerWidth.toFixed())
-    posy = (Math.random() * window.innerHeight.toFixed())
+     width = sentenceDiv.offsetWidth
+     height = sentenceDiv.offsetHeight
 
-    wordDiv.style.position = 'absolute'
-    wordDiv.style.left = `${posx}px`
-    wordDiv.style.top = `${posy}px`
-    // wordDiv.style.display = 'none'
-    wordDiv.innerText = word
-    return wordDiv
-  }
+     // make position sensitive to size and document's width
+     posx = (Math.random() * width)
+     posy = (Math.random() * height)
+
+
+     wordDiv.style.position = 'absolute'
+     wordDiv.style.left = `${posx}px`
+     wordDiv.style.top = `${posy}px`
+
+     console.log(wordDiv.style.left);
+     console.log(wordDiv.style.top);
+
+     wordDiv.innerText = word
+     return wordDiv
+   }
 
     function clearDivs() {
       const sentenceDiv = document.getElementById("sentence")
+      const resultDiv = document.getElementById("results")
       sentenceDiv.innerHTML = ""
+      if (document.contains(resultDiv)) {
+        resultDiv.innerText = "";
+      }
+    }
+
+    function resultScreen() {
+      resultDiv = document.getElementById("results")
+      let total = currentSentenceArray.length
+      let text = document.createTextNode(`your score is ${currentScore} / ${total}`)
+      clearDivs();
+      resultDiv.appendChild(text)
     }
 
 })
