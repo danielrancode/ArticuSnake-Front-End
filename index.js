@@ -3,22 +3,15 @@ document.addEventListener("DOMContentLoaded", function() {
     .then(text => text.json())
     .then(sentenceObjectArray => runApplication(sentenceObjectArray))
 
-  let currentWord
-  let currentSentenceArray
-  let allSentences
-  let wordCounter = 0
-  let button = document.getElementById('word-button')
-
+    // set-up recognition
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let recognition = new SpeechRecognition()
-  let firstOutput = document.querySelector('.heard-output')
+  const recognition = new SpeechRecognition()
 
-  // recognition.onend = function() {
-  //   recognition.stop();
-  //   console.log('Speech recognition has stopped.');
-  // }
+  recognition.onspeechend = () => {
+    console.log("onspeechend, about to hit restartMic()")
+    restartMic()
+  }
 
-  //Listen for when the user finishes talking
   recognition.addEventListener('result', e => {
       if (wordCounter != currentSentenceArray.length) {
         let transcript = e.results[0][0].transcript.toLowerCase()
@@ -26,32 +19,28 @@ document.addEventListener("DOMContentLoaded", function() {
         let wordDiv = document.getElementById(`word-${++wordCounter}`)
         updateWord(wordDiv, transcript)
         if (wordCounter == currentSentenceArray.length) {
-          
-          stopMic()
           round(allSentences)
-        } else {
-          startMic()
         }
       }
   });
 
-  function startMic() {
-    recognition.onend = function() {
-      recognition.start()
-      console.log("running Start Mic")
+  let currentSentenceArray
+  let allSentences
+  let wordCounter = 0
+  let button = document.getElementById('word-button')
+  let firstOutput = document.querySelector('.heard-output')
+
+  function restartMic() {
+      recognition.stop()
+      setTimeout(() => {
+        recognition.start()
+        console.log("restarted!")
+        }, 500)
     }
-  }
-
-  function stopMic() {
-    // recognition.onend = function() {
-        recognition.stop()
-        console.log("running stop mic")
-
-    // }
-  }
 
   function runApplication(sentenceObjectArray) {
     allSentences = sentenceObjectArray
+    restartMic()
     round(allSentences)
   }
 
@@ -61,38 +50,53 @@ document.addEventListener("DOMContentLoaded", function() {
     let sentence = getRandomSentence(sentenceObjectArray)
     currentSentenceArray = sentence.content.split(" ")
     displaySentence(currentSentenceArray)
-    recognition.start()
-    console.log("hitting the round function")
   }
 
   function updateWord(wordDiv, input) {
-    if (wordDiv.innerText === input) {
+    if (wordDiv.innerText.toLowerCase() === input) {
       wordDiv.style.color = 'green'
     } else {
       wordDiv.style.color = 'red'
     }
   }
 
-
   function getRandomSentence(info) {
     return info[Math.floor(Math.random()*info.length)];
   }
 
   function displaySentence(sentenceWordArray) {
-    const sentenceDiv = document.getElementById("sentence")
-    let counter = 0
-    sentenceWordArray.forEach(word => {
-      const wordDiv = document.createElement("div")
-      wordDiv.setAttribute("id", `word-${++counter}`)
-      wordDiv.setAttribute("class", "word-box")
-      wordDiv.innerText = word
-      sentenceDiv.appendChild(wordDiv)
-    })
+   const sentenceDiv = document.getElementById("sentence")
+   let counter = 1
+   sentenceWordArray.forEach(word => {
+     const wordDiv = document.createElement("div")
+     let newDiv = makeDiv(counter, word)
+
+     sentenceDiv.appendChild(newDiv)
+     ++ counter
+   })
+ }
+
+   function makeDiv(num, word){
+    wordDiv = document.createElement("div")
+
+    wordDiv.setAttribute("id", `word-${num}`)
+    wordDiv.setAttribute("class", "word-box")
+
+    // make position sensitive to size and document's width
+    posx = (Math.random() * window.innerWidth.toFixed())
+    posy = (Math.random() * window.innerHeight.toFixed())
+
+    wordDiv.style.position = 'absolute'
+    wordDiv.style.left = `${posx}px`
+    wordDiv.style.top = `${posy}px`
+    // wordDiv.style.display = 'none'
+    wordDiv.innerText = word
+    return wordDiv
   }
 
-  function clearDivs() {
-    const sentenceDiv = document.getElementById("sentence")
-    sentenceDiv.innerHTML = ""
-  }
+    function clearDivs() {
+      const sentenceDiv = document.getElementById("sentence")
+      sentenceDiv.innerHTML = ""
+    }
 
 })
