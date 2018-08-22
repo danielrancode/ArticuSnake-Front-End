@@ -9,13 +9,14 @@ document.addEventListener("DOMContentLoaded", function() {
     let wordCounter = 0
     let button = document.getElementById('word-button')
     let firstOutput = document.querySelector('.heard-output')
+    const mySound = new sound("coinSound.wav");
 
     // set-up recognition
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition()
 
   recognition.onspeechend = () => {
-    console.log("onspeechend, about to hit restartMic()")
+    // console.log("onspeechend, about to hit restartMic()")
     restartMic()
   }
 
@@ -39,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
       recognition.stop()
       setTimeout(() => {
         recognition.start()
-        console.log("restarted!")
+        // console.log("restarted!")
         }, 500)
     }
 
@@ -56,11 +57,13 @@ document.addEventListener("DOMContentLoaded", function() {
     let sentence = getRandomSentence(sentenceObjectArray)
     currentSentenceArray = sentence.content.split(" ")
     displaySentence(currentSentenceArray)
+    // debugger
   }
 
   function updateWord(wordDiv, input) {
     if (wordDiv.innerText.toLowerCase() === input) {
       wordDiv.style.color = 'green'
+      mySound.play()
       currentScore ++
     } else {
       wordDiv.style.color = 'red'
@@ -102,8 +105,9 @@ document.addEventListener("DOMContentLoaded", function() {
      wordDiv.style.left = `${posx}px`
      wordDiv.style.top = `${posy}px`
 
-     console.log(wordDiv.style.left);
-     console.log(wordDiv.style.top);
+     console.log(`${word} left = ${wordDiv.style.left}`);
+     console.log(`${word} top = ${wordDiv.style.top}`);
+
 
      wordDiv.innerText = word
      return wordDiv
@@ -125,5 +129,20 @@ document.addEventListener("DOMContentLoaded", function() {
       clearDivs();
       resultDiv.appendChild(text)
     }
+
+    function sound(src) {
+     this.sound = document.createElement("audio");
+     this.sound.src = src;
+     this.sound.setAttribute("preload", "auto");
+     this.sound.setAttribute("controls", "none");
+     this.sound.style.display = "none";
+     document.body.appendChild(this.sound);
+     this.play = function(){
+         this.sound.play();
+     }
+     this.stop = function(){
+         this.sound.pause();
+   }
+ }
 
 })
