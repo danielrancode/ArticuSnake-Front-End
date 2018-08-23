@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let firstOutput = document.querySelector('.heard-output')
     const correctSound = new sound("gotWordRight.wav");
     const incorrectSound = new sound("gotWordWrong.wav");
+    let wordHeardDiv = document.getElementById('word-heard')
 
     // set-up recognition
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -25,9 +26,8 @@ document.addEventListener("DOMContentLoaded", function() {
       if (wordCounter != currentSentenceArray.length) {
         let transcript = e.results[0][0].transcript.toLowerCase()
         let input = convertHomonym(transcript)
-        console.log(transcript)
         let wordDiv = document.getElementById(`word-${++wordCounter}`)
-        console.log(input);
+        console.log(`Word recognized: ${input}`);
         updateWord(wordDiv, input)
         if (wordCounter == currentSentenceArray.length) {
           resultScreen()
@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function updateWord(wordDiv, input) {
+    wordHeardDiv.innerText = `Word heard: ${input}`
     if (wordDiv.innerText.toLowerCase() === input) {
       wordDiv.style.color = 'green'
       correctSound.play()
@@ -88,6 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function displaySentence(sentenceWordArray) {
+    wordHeardDiv.innerText = ""
    const sentenceDiv = document.getElementById("sentence")
    let counter = 1
    sentenceWordArray.forEach(word => {
@@ -136,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function resultScreen() {
+
       resultDiv = document.getElementById("results")
       let total = currentSentenceArray.length
       let text = document.createTextNode(`your score is ${currentScore} / ${total}`)
