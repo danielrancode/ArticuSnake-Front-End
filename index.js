@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .then(text => text.json())
     .then(sentenceObjectArray => runApplication(sentenceObjectArray))
 
+    let sentenceDiv = document.getElementById('sentence')
     let currentSentenceArray
     let allSentences
     let currentScore
@@ -30,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log(`Word recognized: ${input}`);
         updateWord(wordDiv, input)
         if (wordCounter == currentSentenceArray.length) {
-          resultScreen()
+          setTimeout(() => resultScreen(), 1000)
           setTimeout(() => {
             round(allSentences)
           }, 6000);
@@ -64,7 +65,8 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function updateWord(wordDiv, input) {
-    wordHeardDiv.innerText = `Word heard: ${input}`
+    wordHeardDiv.innerText = `You said: ${input}`
+    wordHeardDiv.className = "on"
     if (wordDiv.innerText.toLowerCase() === input) {
       wordDiv.style.color = 'green'
       correctSound.play()
@@ -95,43 +97,49 @@ document.addEventListener("DOMContentLoaded", function() {
    sentenceWordArray.forEach(word => {
      const wordDiv = document.createElement("div")
      let newDiv = makeDiv(counter, word)
-
      sentenceDiv.appendChild(newDiv)
-     ++ counter
+     let divToAnimate = document.getElementById(`word-${counter}`)
+     setWordDivPosition(divToAnimate)
+          setInterval(() => {
+            setWordDivPosition(divToAnimate);
+            console.log(`setWordDivPosition(divToAnimate), divToAnimate = ${divToAnimate}`)
+          }, 5000)
+     ++counter
    })
  }
 
  function makeDiv(num, word){
-      let sentenceDiv = document.getElementById('sentence')
      wordDiv = document.createElement("div")
 
      wordDiv.setAttribute("id", `word-${num}`)
      wordDiv.setAttribute("class", "word-box")
 
-     width = sentenceDiv.offsetWidth
-     height = sentenceDiv.offsetHeight
-
-     // make position sensitive to size and document's width
-     posx = (Math.random() * width)
-     posy = (Math.random() * height)
-
-
-     wordDiv.style.position = 'absolute'
-     wordDiv.style.left = `${posx}px`
-     wordDiv.style.top = `${posy}px`
-
-     console.log(`${word} left = ${wordDiv.style.left}`);
-     console.log(`${word} top = ${wordDiv.style.top}`);
-
+     setWordDivPosition(wordDiv)
 
      wordDiv.innerText = word
      return wordDiv
    }
 
+    function setWordDivPosition(wordDiv) {
+      width = sentenceDiv.offsetWidth
+      height = sentenceDiv.offsetHeight
+
+      // make position sensitive to size and document's width
+      posx = (Math.random() * width)
+      posy = (Math.random() * height)
+
+      wordDiv.style.position = 'absolute'
+      wordDiv.style.left = `${posx}px`
+      wordDiv.style.top = `${posy}px`
+
+    }
+
     function clearDivs() {
       const sentenceDiv = document.getElementById("sentence")
       const resultDiv = document.getElementById("results")
       sentenceDiv.innerHTML = ""
+      wordHeardDiv.innerHTML = ""
+      wordHeardDiv.className = ""
       if (document.contains(resultDiv)) {
         resultDiv.innerText = "";
       }
