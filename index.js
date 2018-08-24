@@ -1,29 +1,56 @@
 document.addEventListener("DOMContentLoaded", function() {
+
+  let choice = prompt("Welcome! Do you want to learn by sentence or by word?").toLowerCase()
+
   fetch("http://localhost:3000/api/v1/sentences")
     .then(text => text.json())
     .then(sentenceObjectArray => runApplication(sentenceObjectArray))
 
-    let sentenceDiv = document.getElementById('sentence')
-    let currentSentenceArray
-    let allSentences
-    let currentScore
-    let wordCounter = 0
-    let button = document.getElementById('word-button')
-    let firstOutput = document.querySelector('.heard-output')
-    const correctSound = new sound("gotWordRight.wav");
-    const incorrectSound = new sound("gotWordWrong.wav");
-    let wordHeardDiv = document.getElementById('word-heard')
-
-    // set-up recognition
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRecognition()
 
-  recognition.onspeechend = () => {
-    // console.log("onspeechend, about to hit restartMic()")
-    restartMic()
+  let sentenceDiv = document.getElementById('sentence')
+  let currentSentenceArray
+  let allSentences
+  let currentScore
+  let wordCounter = 0
+  let firstOutput = document.querySelector('.heard-output')
+  const correctSound = new sound("gotWordRight.wav");
+  const incorrectSound = new sound("gotWordWrong.wav");
+  let wordHeardDiv = document.getElementById('word-heard')
+
+  function runApplication(sentenceObjectArray) {
+    allSentences = sentenceObjectArray
+    if (choice === "word") {
+      restartMic()
+    }
+    round(allSentences)
   }
 
-  recognition.addEventListener('result', e => {
+
+
+  if (choice === "sentence") {
+
+    recognition.addEventListener('result', e => {
+      let input = e.results[0][0].transcript
+      inputArray = input.split(" ")
+      wordHeardDiv.innerText = `You said: ${input}`
+      let slicedArray = inputArray.slice(0, currentSentenceArray.length)
+      console.log(slicedArray)
+      slicedArray.forEach(function(word) {
+        updateWord(document.getElementById(`word-${++wordCounter}`), word)
+      })
+      setTimeout(() => {
+        resultScreen()
+      }, 1000);
+      setTimeout(() => {
+        round(allSentences)
+      }, 4000);
+    });
+  } else if (choice === "word") {
+
+    recognition.addEventListener('result', e => {
+      console.log("listening")
       if (wordCounter != currentSentenceArray.length) {
         let transcript = e.results[0][0].transcript.toLowerCase()
         let input = convertHomonym(transcript)
@@ -34,57 +61,57 @@ document.addEventListener("DOMContentLoaded", function() {
           setTimeout(() => resultScreen(), 1000)
           setTimeout(() => {
             round(allSentences)
-          }, 6000);
+          }, 4000);
         }
       }
-  });
+    })
 
+    recognition.onspeechend = () => {
+      restartMic()
+    }
+  }
 
   function restartMic() {
-      recognition.stop()
-      setTimeout(() => {
-        recognition.start()
-        // console.log("restarted!")
-        }, 500)
-    }
-
-  function runApplication(sentenceObjectArray) {
-    allSentences = sentenceObjectArray
-    restartMic()
-    round(allSentences)
+    recognition.stop()
+    console.log("stopped Mic")
+    setTimeout(() => {
+      recognition.start()
+      console.log("started Mic")
+      }, 500)
   }
 
   function round(sentenceObjectArray) {
+    if (choice === "sentence") {
+      recognition.start()
+    }
     wordCounter = 0
     currentScore = 0
     clearDivs()
     let sentence = getRandomSentence(sentenceObjectArray)
     currentSentenceArray = sentence.content.split(" ")
     displaySentence(currentSentenceArray)
-    // debugger
   }
 
   function updateWord(wordDiv, input) {
-    wordHeardDiv.innerText = `You said: ${input}`
-    wordHeardDiv.className = "on"
-    if (wordDiv.innerText.toLowerCase() === input) {
-      wordDiv.style.color = 'green'
-      correctSound.play()
-      currentScore ++
-    } else if (wordDiv.innerText.toLowerCase() == "too" || wordDiv.innerText.toLowerCase() == "too") {
-        if (input === "2") {
-          wordDiv.style.color = 'green'
-          correctSound.play()
-          currentScore ++
-        } else {
-          wordDiv.style.color = 'red'
-          incorrectSound.play()
-        }
-    } else {
-      wordDiv.style.color = 'red'
-      incorrectSound.play()
-    }
-  }
+     const value = input.toLowerCase()
+     if (wordDiv.innerText.toLowerCase() === value) {
+       wordDiv.style.color = 'green'
+       correctSound.play()
+       currentScore ++
+     } else if (wordDiv.innerText.toLowerCase() == "too" || wordDiv.innerText.toLowerCase() == "too") {
+         if (value === "2") {
+           wordDiv.style.color = 'green'
+           correctSound.play()
+           currentScore ++
+         } else {
+           wordDiv.style.color = 'red'
+           incorrectSound.play()
+         }
+     } else {
+       wordDiv.style.color = 'red'
+       incorrectSound.play()
+     }
+   }
 
   function getRandomSentence(info) {
     return info[Math.floor(Math.random()*info.length)];
@@ -146,10 +173,12 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function resultScreen() {
-
+      if (choice === "sentence") {
+        recognition.stop()
+      }
       resultDiv = document.getElementById("results")
       let total = currentSentenceArray.length
-      let text = document.createTextNode(`your score is ${currentScore} / ${total}`)
+      let text = document.createTextNode(`you got ${currentScore} out of ${total} correct`)
       clearDivs();
       resultDiv.appendChild(text)
     }
@@ -183,5 +212,4 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     return transcript
   }
-
 })
