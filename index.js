@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function() {
         let input = convertHomonym(transcript)
         checkIfShowMe(e)
         checkIfDespacito(e)
-        if (transcript === "alexa play despacito"){
+        if (transcript === "Alexa play despacito"){
           despacitoSound.play()
           let bieberDiv = document.getElementById("bieber")
           bieberDiv.style.display = "block"
@@ -86,13 +86,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     recognition.onspeechend = () => {
       restartMic()
-    }
-  }
-
-  function checkIfDespacito(e) {
-    let transcript = e.results[0][0].transcript.toLowerCase()
-    if (transcript === "alexa play despacito"){
-      despacitoSound.play()
     }
   }
 
