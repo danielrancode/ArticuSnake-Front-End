@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", function() {
       inputArray = input.split(" ")
       wordHeardDiv.innerText = `You said: ${input}`
       checkIfShowMe(e)
-
       let slicedArray = inputArray.slice(0, currentSentenceArray.length)
       console.log(slicedArray)
       slicedArray.forEach(function(word) {
@@ -50,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
         round(allSentences)
       }, 4000);
     });
+
   } else if (choice === "word") {
 
     recognition.addEventListener('result', e => {
@@ -123,6 +123,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function updateWord(wordDiv, input) {
      const value = input.toLowerCase()
+     if (choice === "word") {
+       wordHeardDiv.innerText = `you said: ${input}`
+     }
      if (wordDiv.innerText.toLowerCase() === value) {
        wordDiv.style.color = 'green'
        correctSound.play()
