@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
   let firstOutput = document.querySelector('.heard-output')
   const correctSound = new sound("gotWordRight.wav");
   const incorrectSound = new sound("gotWordWrong.wav");
+  const despacitoSound = new sound("despacito.mp3")
   let wordHeardDiv = document.getElementById('word-heard')
   const photosDiv = document.getElementById('photos')
 
@@ -36,12 +37,19 @@ document.addEventListener("DOMContentLoaded", function() {
       let input = e.results[0][0].transcript
       inputArray = input.split(" ")
       wordHeardDiv.innerText = `You said: ${input}`
+      if (input === "Alexa play despacito"){
+        clearDivs();
+        despacitoSound.play()
+        let bieberDiv = document.getElementById("bieber")
+        bieberDiv.style.display = "block"
+      }
       checkIfShowMe(e)
       let slicedArray = inputArray.slice(0, currentSentenceArray.length)
       console.log(slicedArray)
       slicedArray.forEach(function(word) {
         updateWord(document.getElementById(`word-${++wordCounter}`), word)
       })
+
       setTimeout(() => {
         resultScreen()
       }, 1000);
@@ -58,6 +66,12 @@ document.addEventListener("DOMContentLoaded", function() {
         let transcript = e.results[0][0].transcript.toLowerCase()
         let input = convertHomonym(transcript)
         checkIfShowMe(e)
+        checkIfDespacito(e)
+        if (transcript === "alexa play despacito"){
+          despacitoSound.play()
+          let bieberDiv = document.getElementById("bieber")
+          bieberDiv.style.display = "block"
+        }
         let wordDiv = document.getElementById(`word-${++wordCounter}`)
         console.log(`Word recognized: ${input}`);
         updateWord(wordDiv, input)
@@ -72,6 +86,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     recognition.onspeechend = () => {
       restartMic()
+    }
+  }
+
+  function checkIfDespacito(e) {
+    let transcript = e.results[0][0].transcript.toLowerCase()
+    if (transcript === "alexa play despacito"){
+      despacitoSound.play()
     }
   }
 
