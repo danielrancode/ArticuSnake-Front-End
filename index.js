@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const correctSound = new sound("gotWordRight.wav");
   const incorrectSound = new sound("gotWordWrong.wav");
   let wordHeardDiv = document.getElementById('word-heard')
+  const photosDiv = document.getElementById('photos')
 
   function runApplication(sentenceObjectArray) {
     allSentences = sentenceObjectArray
@@ -35,6 +36,8 @@ document.addEventListener("DOMContentLoaded", function() {
       let input = e.results[0][0].transcript
       inputArray = input.split(" ")
       wordHeardDiv.innerText = `You said: ${input}`
+      checkIfShowMe(e)
+
       let slicedArray = inputArray.slice(0, currentSentenceArray.length)
       console.log(slicedArray)
       slicedArray.forEach(function(word) {
@@ -54,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function() {
       if (wordCounter != currentSentenceArray.length) {
         let transcript = e.results[0][0].transcript.toLowerCase()
         let input = convertHomonym(transcript)
+        checkIfShowMe(e)
         let wordDiv = document.getElementById(`word-${++wordCounter}`)
         console.log(`Word recognized: ${input}`);
         updateWord(wordDiv, input)
@@ -70,6 +74,31 @@ document.addEventListener("DOMContentLoaded", function() {
       restartMic()
     }
   }
+
+  function checkIfShowMe(e) {
+    photosDiv.innerHTML = ""
+    let transcript = e.results[0][0].transcript.toLowerCase()
+    splitWords = transcript.split(" ")
+    if (splitWords[0] == "show" && splitWords[1] == "me"){
+      fetch(`https://api.flickr.com/services/rest/?format=json&api_key=ff0739871df955182071444c826a2753&method=flickr.photos.search&nojsoncallback=1&per_page=14&media=photos&extras=url_l&tags=${splitWords[2]}`)
+      .then(text => text.json())
+      .then(picturesArray => postPhotos(picturesArray))
+    }
+  }
+
+  function postPhotos(photosArray) {
+    counter = 0
+    photosArray.photos.photo.forEach(photo => {
+      let newDiv = document.createElement('div')
+      newDiv.setAttribute('id',`photo-${++counter}`)
+      newDiv.setAttribute('class', "photo")
+      newDiv.style.display = 'inline-block'
+      newDiv.innerHTML = `<img src="${photo.url_l}" height="100" width="100">`
+      photosDiv.appendChild(newDiv)
+      setTimeout(x=>console.log('hi'), 3000)
+    })
+  }
+
 
   function restartMic() {
     recognition.stop()

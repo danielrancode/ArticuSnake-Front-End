@@ -1,61 +1,86 @@
-body{
-  font-family: 'Poppins', thin italic;
 
-}
+  body{
+    font-family: 'Poppins', thin italic;
 
-.word-box{
-  font-size: 70px;
-  margin: 20px
-  display:inline;
-  transition: top 5s linear, left 5s linear;
-  /* transition: top 5s linear; */
-  -webkit-transition-timing-function: ease-in-out;
-}
+  }
 
-.flex{
-  display: flex;
-  flex-direction: column;
-  width: 90%
-}
+  .word-box{
+    font-size: 70px;
+    margin: 20px
+    display:inline;
+    transition: top 5s linear, left 5s linear;
+    /* transition: top 5s linear; */
+    -webkit-transition-timing-function: ease-in-out;
+  }
 
-h1{
-  font-size: 80px;
-}
+  .flex{
+    display: flex;
+    flex-direction: column;
+    width: 90%
+  }
 
-#header{
-  background-color: rgb(140, 193, 203);
-}
+  h1{
+    font-size: 80px;
+  }
 
-#results{
-  font-size: 70px;
-}
+  #header{
+    background-color: rgb(140, 193, 203);
+  }
+
+  #results{
+    font-size: 70px;
+  }
 
 
-#sentence{
+  #sentence{
 
-  position: relative;
-  display: block;
-  width:90%;
-  /* height:500px; */
-  height:400px;
-}
+    position: relative;
+    display: block;
+    width:90%;
+    /* height:500px; */
+    height:400px;
+  }
 
-#word-heard{
-  /* justify-content: center; */
-  color: rgb(140, 193, 203);
-  padding: 1em;
-  /* position relative; */
-  /* display: block; */
-  /* width:100%; */
-  /* height:150px; */
-  font-size: 70px;
-}
+  #word-heard{
+    /* justify-content: center; */
+    color: rgb(140, 193, 203);
+    padding: 1em;
+    /* position relative; */
+    /* display: block; */
+    /* width:100%; */
+    /* height:150px; */
+    font-size: 70px;
+  }
 
-.bottom-page{
-  display: flex;
-  justify-content: center
-}
+  .bottom-page{
+    display: flex;
+    justify-content: center
+  }
 
-.on{
-  border: 1px solid rgb(140, 193, 203);
-}
+  .on{
+    border: 1px solid rgb(140, 193, 203);
+  }
+
+
+  #photos{
+    display: flex;
+    width: 100%;
+  }
+
+  .photo{
+    position: relative;
+  }
+
+  div.photo {
+     -webkit-animation: fade 5s;
+     animation: fade 5s;
+     /* width: 300px; */
+  }
+  /* -fail- */
+  @-webkit-keyframes fade {
+     from {width: 0}
+     to {width: 100%}
+  }@keyframes fade {
+     from {width: 0}
+     to {width: 100%}
+  }
