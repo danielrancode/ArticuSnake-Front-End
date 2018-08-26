@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   let choice = prompt("Welcome! Do you want to learn by sentence or by word?").toLowerCase()
 
-  fetch("http://localhost:3000/api/v1/sentences")
+  fetch("https://quiet-falls-82373.herokuapp.com/api/v1/sentences")
     .then(text => text.json())
     .then(sentenceObjectArray => runApplication(sentenceObjectArray))
 
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function() {
         let input = convertHomonym(transcript)
         checkIfShowMe(e)
         checkIfDespacito(e)
-        if (transcript === "alexa play despacito"){
+        if (transcript === "Alexa play despacito"){
           despacitoSound.play()
           let bieberDiv = document.getElementById("bieber")
           bieberDiv.style.display = "block"
@@ -89,12 +89,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  function checkIfDespacito(e) {
-    let transcript = e.results[0][0].transcript.toLowerCase()
-    if (transcript === "alexa play despacito"){
-      despacitoSound.play()
-    }
-  }
 
   function checkIfShowMe(e) {
     photosDiv.innerHTML = ""
